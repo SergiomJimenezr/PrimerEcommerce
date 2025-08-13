@@ -1,65 +1,195 @@
 body {
     font-family: 'Segoe UI', sans-serif;
-    background: #111; 
-    color: #eee;       
+    background: #111;
+    color: #eee;
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
 }
 
-.contenedor {
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
+.logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    text-align: center;
+    background: linear-gradient(90deg, #d4af37, #ffdf6c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    margin: 20px 0;
+    letter-spacing: 2px;
+}
+
+.logo span {
+    font-size: 1.2rem;
+    display: block;
+    font-weight: 400;
+    background: none;
+    -webkit-text-fill-color: #ccc;
+    text-shadow: none;
+}
+
+header, footer {
+    text-align: center;
+    padding: 20px;
     background: #1a1a1a;
-    padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.4);
-    max-width: 700px;
+}
+
+main {
+    padding: 20px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.producto {
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 15px;
     text-align: center;
     border: 1px solid #333;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-h1 {
-    color: #fff;
-    font-size: 28px;
+.producto:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+}
+
+.producto img {
+    max-width: 100%;
+    border-radius: 8px;
     margin-bottom: 10px;
 }
 
-p {
-    color: #ccc;
-    font-size: 16px;
-}
-
-button {
-    margin-top: 24px;
-    background-color: #fff;
-    color: #111;
-    padding: 12px 30px;
-    font-size: 16px;
-    border: none;
+.producto-img {
+    max-width: 100%;
     border-radius: 8px;
+    margin-bottom: 10px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: transform 0.3s ease;
 }
 
-button:hover {
-    background-color: #ccc;
-    color: #000;
+.producto-img:hover {
+    transform: scale(1.05);
 }
 
-footer {
-    position: absolute;
-    bottom: 20px;
-    width: 100%;
-    text-align: center;
-    font-size: 13px;
-    color: #777;
-    border-top: 1px solid #333;
-    padding-top: 10px;
+.producto h3 {
+    margin: 10px 0;
+    font-size: 18px;
 }
 
-footer .frase {
+.producto p {
+    margin: 5px 0;
+    color: #bbb;
+}
+
+.producto button {
+    background: #fff;
+    color: #111;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.producto button:hover {
+    background: #ccc;
+}
+
+#mensaje {
+    margin-top: 10px;
+    color: lightgreen;
+}
+
+.frase {
     font-style: italic;
     color: #999;
+}
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+}
+
+.modal-contenido {
+    background: #1a1a1a;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+}
+
+#modalImg {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border-radius: 8px;
+}
+
+
+#modalNombre {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+
+#modalPrecio {
+    font-size: 18px;
+    color: #ffcc00;
+    margin-bottom: 15px;
+}
+
+
+#modalAgregar {
+    background: #ffcc00;
+    color: #111;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+#modalAgregar:hover {
+    background: #e6b800;
+}
+
+.modal img {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.cerrar {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#modalTalle {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0 15px 0;
+    border-radius: 6px;
+    border: none;
 }

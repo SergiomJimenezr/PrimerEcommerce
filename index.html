@@ -1,22 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Di.Ego</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<title>Di.Ego – E-commerce Hombre</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="contenedor">
-    <h1>Di.Ego — Donde tu ego cobra estilo</h1>
-    <p>Explorá nuestras prendas, sumalas al carrito y descubrí beneficios únicos al finalizar tu compra.</p>
-    <button onclick="iniciarSimulador()">Iniciar Compra</button>
+    <header>
+        <h1 class="logo">Di.Ego <span> Vístete con actitud</span></h1>
+        <div id="carritoHeader">
+        🛒 Carrito: <span id="contadorCarrito">0</span>
     </div>
+    </header>
 
-<footer>
-    <p>© 2025 <strong>Di.Ego</strong> — Vístete con actitud.</p>
-    <p class="frase">"Lo que llevás dice quién sos."</p>
+    <main>
+    <section>
+        <h2>Catálogo</h2>
+        <div id="catalogo" class="grid"></div>
+    </section>
 
-</footer>
+
+    <section>
+        <h2>Carrito de Compras</h2>
+        <ul id="carrito"></ul>
+        <p id="total">Total: $0</p>
+        <input type="text" id="codigoDescuento" placeholder="Código de descuento">
+        <button id="aplicarDescuento">Aplicar descuento</button>
+        <button id="vaciarCarrito">Vaciar carrito</button>
+        <p id="mensaje"></p>
+    </section>
+    </main>
+
+    <footer>
+        <p>© 2025 <strong>Di.Ego</strong> — Vístete con actitud.</p>
+        <p class="frase">"Lo que llevás dice quién sos."</p>
+    </footer>
+
+
+    <div id="modal" class="modal">
+        <div class="modal-contenido">
+        <span id="cerrarModal" class="cerrar">&times;</span>
+        <img id="modalImg" src="" alt="">
+        <h3 id="modalNombre"></h3>
+        <p id="modalPrecio"></p>
+
+    <label for="modalTalle">Selecciona tu talle:</label>
+    <select id="modalTalle">
+        <option value="">-- Elige un talle --</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+    </select>
+
+        <button id="modalAgregar">Agregar al carrito</button>
+    </div>
+ </div>
 
     <script src="js/app.js"></script>
 </body>
