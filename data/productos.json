@@ -1,0 +1,9 @@
+[
+{ "id": 1, "nombre": "Shorts de lino", "precioSinIVA": 18000, "img": "img/ShortLinoAzul.jpeg" },
+{ "id": 2, "nombre": "Shorts de algodón", "precioSinIVA": 15000, "img": "img/ShortAlgodonGris.jpeg" },
+{ "id": 3, "nombre": "Camisas de lino", "precioSinIVA": 25000, "img": "img/CamisaLino1.jpeg" },
+{ "id": 4, "nombre": "Remeras de algodón", "precioSinIVA": 12000, "img": "img/Remera2.jpeg" },
+{ "id": 5, "nombre": "Joggin de algodón", "precioSinIVA": 22000, "img": "img/Jogging.jpeg" },
+{ "id": 6, "nombre": "Remera Básica", "precioSinIVA": 19000, "img": "img/RemeraBeige.jpeg" },
+{ "id": 7, "nombre": "Conjunto Campera y Joggin algodón", "precioSinIVA": 48000, "img": "img/ConjuntoJogging.jpeg" }
+]

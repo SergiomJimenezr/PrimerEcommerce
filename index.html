@@ -1,61 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Di.Ego – E-commerce Hombre</title>
-<link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8" />
+    <title>Di.Ego E-commerce</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
     <header>
-        <h1 class="logo">Di.Ego <span> Vístete con actitud</span></h1>
-        <div id="carritoHeader">
+    <h1 class="logo">Di.Ego <span>Vístete con actitud</span></h1>
+    <nav class="nav">
+        <a href="#catalogo">Catálogo</a>
+        <a href="#checkout">Checkout</a>
+    </nav>
+    <div id="carritoHeader">
         🛒 Carrito: <span id="contadorCarrito">0</span>
     </div>
-    </header>
+</header>
 
     <main>
-    <section>
+    <section id="catalogo" class="seccion">
         <h2>Catálogo</h2>
-        <div id="catalogo" class="grid"></div>
+        <div id="gridProductos" class="grid"></div>
     </section>
 
+    <section id="carritoSeccion" class="seccion">
+    <h2>Carrito</h2>
+    <ul id="listaCarrito"></ul>
+    <div class="resumen">
+        <p id="subtotal">Subtotal: $0</p>
+        <p id="iva">IVA (21%): $0</p>
+        <p id="envio">Envío: $0</p>
+        <p id="descuento">Descuento: $0</p>
+        <h3 id="total">Total: $0</h3>
+    </div>
 
-    <section>
-        <h2>Carrito de Compras</h2>
-        <ul id="carrito"></ul>
-        <p id="total">Total: $0</p>
-        <input type="text" id="codigoDescuento" placeholder="Código de descuento">
-        <button id="aplicarDescuento">Aplicar descuento</button>
-        <button id="vaciarCarrito">Vaciar carrito</button>
-        <p id="mensaje"></p>
+    <div class="accionesCarrito">
+        <input type="text" id="codigoDescuento" placeholder="Código (Di.Ego)" />
+        <button id="aplicarDescuento">Aplicar</button>
+
+        <select id="metodoEnvio">
+            <option value="0">Retiro en local (Gratis)</option>
+            <option value="2500">Envío estándar ($2.500)</option>
+            <option value="4500">Envío exprés ($4.500)</option>
+        </select>
+
+        <button id="vaciarCarrito" class="peligro">Vaciar</button>
+    </div>
+</section>
+
+    <section id="checkout" class="seccion">
+    <h2>Checkout</h2>
+    <form id="formCheckout" novalidate>
+        <div class="gridForm">
+        <label>Nombre
+            <input type="text" id="nombre" required />
+        </label>
+        <label>Apellido
+            <input type="text" id="apellido" required />
+        </label>
+        <label>Email
+            <input type="email" id="email" required />
+        </label>
+        <label>Teléfono
+            <input type="tel" id="telefono" required />
+        </label>
+        <label>Dirección
+            <input type="text" id="direccion" required />
+        </label>
+        <label>Ciudad
+            <input type="text" id="ciudad" required />
+        </label>
+        <label>Provincia
+            <input type="text" id="provincia" required />
+        </label>
+        <label>Código Postal
+            <input type="text" id="cp" required />
+            </label>
+        </div>
+        <button type="submit" id="btnPagar">Finalizar compra</button>
+        </form>
     </section>
-    </main>
-
-    <footer>
-        <p>© 2025 <strong>Di.Ego</strong> — Vístete con actitud.</p>
-        <p class="frase">"Lo que llevás dice quién sos."</p>
-    </footer>
-
+        </main>
 
     <div id="modal" class="modal">
-        <div class="modal-contenido">
+    <div class="modal-contenido">
         <span id="cerrarModal" class="cerrar">&times;</span>
-        <img id="modalImg" src="" alt="">
-        <h3 id="modalNombre"></h3>
-        <p id="modalPrecio"></p>
+        <img id="modalImg" alt="">
+    <h3 id="modalNombre"></h3>
+    <p id="modalPrecio"></p>
 
-    <label for="modalTalle">Selecciona tu talle:</label>
+    <label for="modalTalle">Talle</label>
     <select id="modalTalle">
-        <option value="">-- Elige un talle --</option>
-        <option value="S">S</option>
-        <option value="M">M</option>
-        <option value="L">L</option>
-        <option value="XL">XL</option>
+        <option value="">-- Elegí un talle --</option>
+        <option>S</option><option>M</option><option>L</option><option>XL</option>
     </select>
+
+        <label for="modalCantidad">Cantidad</label>
+        <input type="number" id="modalCantidad" min="1" value="1"/>
 
         <button id="modalAgregar">Agregar al carrito</button>
     </div>
- </div>
+    </div>
+
+    <footer>
+    <p>© 2025 <strong>Di.Ego</strong> — Vístete con actitud.</p>
+    <p class="frase">"Lo que llevás dice quién sos."</p>
+    </footer>
 
     <script src="js/app.js"></script>
 </body>

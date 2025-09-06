@@ -1,192 +1,230 @@
 const IVA = 0.21;
+const CODIGO_DESCUENTO = "di.ego";
 
-function withFallback(src) {
-    return src || "img/placeholder.jpg";
-}
-
-const productos = [
-{
-    id: 1,
-    nombre: "Shorts de lino",
-    precioSinIVA: 18000,
-    precioConIVA: (18000 * (1 + IVA)).toFixed(2),
-    img: "img/ShortLinoAzul.jpeg",
-},
-{
-    id: 2,
-    nombre: "Shorts de algodón",
-    precioSinIVA: 15000,
-    precioConIVA: (15000 * (1 + IVA)).toFixed(2),
-    img: "img/ShortAlgodonGris.jpeg",
-},
-{
-    id: 3,
-    nombre: "Camisas de lino",
-    precioSinIVA: 25000,
-    precioConIVA: (25000 * (1 + IVA)).toFixed(2),
-    img: "img/CamisaLino1.jpeg",
-},
-{
-    id: 4,
-    nombre: "Remeras de algodón",
-    precioSinIVA: 12000,
-    precioConIVA: (12000 * (1 + IVA)).toFixed(2),
-    img: "img/Remera2.jpeg",
-},
-{
-    id: 5,
-    nombre: "Joggin de algodón",
-    precioSinIVA: 22000,
-    precioConIVA: (22000 * (1 + IVA)).toFixed(2),
-    img: "img/Jogging.jpeg",
-},
-{
-    id: 6,
-    nombre: "Remera Básica",              // 👈 cambiado
-    precioSinIVA: 28000,
-    precioConIVA: (28000 * (1 + IVA)).toFixed(2),
-    img: "img/RemeraBeige.jpeg",          // 👈 usa tu archivo real
-},
-{
-    id: 7,
-    nombre: "Conjunto Campera y Joggin algodón",
-    precioSinIVA: 48000,
-    precioConIVA: (48000 * (1 + IVA)).toFixed(2),
-    img: "img/ConjuntoJogging.jpeg",
-    },
-];
-
+let catalogo = [];
 let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+let envio = 0;
+let descuento = 0;
 
-function mostrarCatalogo() {
-    const contenedor = document.getElementById("catalogo");
-    contenedor.innerHTML = "";
+const toast = (text, bg="#222") => Toastify({ text, duration: 2000, gravity: "top", position: "right", backgroundColor: bg }).showToast();
 
-    productos.forEach((p) => {
-    const div = document.createElement("div");
-    div.classList.add("producto");
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
 
-    div.innerHTML = `
-        <img src="${p.img}" alt="${p.nombre}" class="producto-img"
-            onclick="abrirModal(${p.id})"
-            onerror="this.onerror=null;this.src='img/placeholder.jpg';">
-        <h3>${p.nombre}</h3>
-        <p>Sin IVA: $${p.precioSinIVA}</p>
-        <p>Con IVA: $${p.precioConIVA}</p>
-        <button onclick="abrirModal(${p.id})">Ver más</button>
-        <button onclick="agregarAlCarrito(${p.id}, '')">Agregar</button>
-    `;
+const money = (n) => n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-    contenedor.appendChild(div);
-    });
-}
-
-function agregarAlCarrito(id, talle) {
-    const producto = productos.find((p) => p.id === id);
-    const productoConTalle = { ...producto, talle };
-    carrito.push(productoConTalle);
-    guardarCarrito();
-    mostrarCarrito();
-    mostrarMensaje(`✅ ${producto.nombre}${talle ? " (Talle " + talle + ")" : ""} agregado al carrito`);
-
-    const contador = document.getElementById("contadorCarrito");
-    contador.classList.add("parpadeo");
-    setTimeout(() => contador.classList.remove("parpadeo"), 800);
-}
-
-function mostrarCarrito() {
-    const lista = document.getElementById("carrito");
-    lista.innerHTML = "";
-    carrito.forEach((item, index) => {
-    const li = document.createElement("li");
-    li.textContent = `${item.nombre} ${item.talle ? "(Talle " + item.talle + ")" : ""} - $${item.precioConIVA}`;
-    const btn = document.createElement("button");
-    btn.textContent = "❌";
-    btn.onclick = () => eliminarDelCarrito(index);
-    li.appendChild(btn);
-    lista.appendChild(li);
-});
-    calcularTotal();
-    actualizarContador();
-}
-
-
-function eliminarDelCarrito(index) {
-    carrito.splice(index, 1);
-    guardarCarrito();
-    mostrarCarrito();
-}
-
-function calcularTotal() {
-    const total = carrito.reduce((acc, p) => acc + parseFloat(p.precioConIVA), 0);
-    document.getElementById("total").textContent = `Total: $${total.toFixed(2)}`;
-}
-
-function guardarCarrito() {
-    localStorage.setItem("carrito", JSON.stringify(carrito));
-}
-
-function actualizarContador() {
-    document.getElementById("contadorCarrito").textContent = carrito.length;
-}
-
-document.getElementById("vaciarCarrito").addEventListener("click", () => {
-    carrito = [];
-    guardarCarrito();
-    mostrarCarrito();
-});
-
-document.getElementById("aplicarDescuento").addEventListener("click", () => {
-    const codigo = document.getElementById("codigoDescuento").value.trim().toLowerCase();
-    if (codigo === "di.ego") {
-    let total = carrito.reduce((acc, p) => acc + parseFloat(p.precioConIVA), 0);
-    const descuento = total * 0.1;
-    const totalFinal = total - descuento;
-    document.getElementById("total").textContent = `Total con descuento: $${totalFinal.toFixed(2)}`;
-    mostrarMensaje(`🎉 Descuento aplicado: -$${descuento.toFixed(2)}`);
-    } else {
-    mostrarMensaje("⚠️ Código inválido");
+async function cargarProductos() {
+    try {
+    const res = await fetch("data/productos.json");
+    if (!res.ok) throw new Error("No se pudo cargar productos");
+    catalogo = await res.json();
+    renderCatalogo();
+} catch (e) {
+    console.error(e);
+    Swal.fire("Error", "No se pudo cargar el catálogo. Verifica data/productos.json", "error");
     }
-});
+}
 
-function mostrarMensaje(texto) {
-    const mensaje = document.getElementById("mensaje");
-    mensaje.textContent = texto;
-    setTimeout(() => (mensaje.textContent = ""), 3000);
+function renderCatalogo() {
+    const grid = $("#gridProductos");
+    grid.innerHTML = "";
+
+catalogo.forEach(p => {
+    const precioConIVA = p.precioSinIVA * (1 + IVA);
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+    <img src="${p.img}" alt="${p.nombre}" onclick="abrirModal(${p.id})" onerror="this.onerror=null;this.src='img/placeholder.jpg'">
+    <h3>${p.nombre}</h3>
+    <p>Sin IVA: $${money(p.precioSinIVA)}</p>
+    <p>Con IVA: $${money(precioConIVA)}</p>
+    <div class="acciones">
+        <button onclick="abrirModal(${p.id})">Ver más</button>
+        <button onclick="agregarAlCarrito(${p.id}, 'M', 1)">Agregar</button>
+    </div>
+    `;
+    grid.appendChild(card);
+});
 }
 
 function abrirModal(id) {
-    const p = productos.find((x) => x.id === id);
-    const imgEl = document.getElementById("modalImg");
-    imgEl.src = withFallback(p.img);
-    imgEl.onerror = function () {
-    this.onerror = null;
-    this.src = "img/placeholder.jpg";
+const p = catalogo.find(x => x.id === id);
+if (!p) return;
+
+$("#modalImg").src = p.img;
+$("#modalImg").onerror = function(){ this.onerror=null; this.src="img/placeholder.jpg"; }
+$("#modalNombre").textContent = p.nombre;
+$("#modalPrecio").textContent = `Precio con IVA: $${money(p.precioSinIVA * (1 + IVA))}`;
+$("#modalTalle").value = "";
+$("#modalCantidad").value = 1;
+
+$("#modalAgregar").onclick = () => {
+    const talle = $("#modalTalle").value;
+    const cant = parseInt($("#modalCantidad").value) || 1;
+    if (!talle) {
+    toast("Elegí un talle", "#ff5252");
+    return;
+    }
+    agregarAlCarrito(id, talle, cant);
+    cerrarModal();
 };
 
-    document.getElementById("modalNombre").textContent = p.nombre;
-    document.getElementById("modalPrecio").textContent = `Precio con IVA: $${p.precioConIVA}`;
+    $("#modal").style.display = "block";
+}
+function cerrarModal(){ $("#modal").style.display = "none"; }
+$("#cerrarModal").addEventListener("click", cerrarModal);
 
-    const select = document.getElementById("modalTalle");
-    select.value = "";
+function agregarAlCarrito(id, talle = "", cantidad = 1) {
+const p = catalogo.find(x => x.id === id);
+if (!p) return;
 
-    document.getElementById("modalAgregar").onclick = () => {
-    const talle = select.value;
-    if (!talle) {
-        mostrarMensaje("⚠️ Selecciona un talle antes de agregar");
+const idx = carrito.findIndex(item => item.id === id && item.talle === talle);
+if (idx >= 0) {
+    carrito[idx].cantidad += cantidad;
+} else {
+    carrito.push({
+        id: p.id,
+        nombre: p.nombre,
+        precioSinIVA: p.precioSinIVA,
+        img: p.img,
+        talle,
+        cantidad
+    });
+}
+guardarCarrito();
+renderCarrito();
+parpadeoContador();
+toast("Agregado al carrito");
+}
+
+function renderCarrito() {
+const ul = $("#listaCarrito");
+ul.innerHTML = "";
+carrito.forEach((item, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+    <span>${item.nombre} ${item.talle ? `(Talle ${item.talle})` : ""} × ${item.cantidad}</span>
+    <div>
+        <button onclick="cambiarCantidad(${i}, -1)">−</button>
+        <button onclick="cambiarCantidad(${i}, 1)">+</button>
+        <button class="peligro" onclick="eliminarDelCarrito(${i})">❌</button>
+    </div>
+    `;
+    ul.appendChild(li);
+});
+actualizarTotales();
+actualizarContador();
+}
+
+function cambiarCantidad(index, delta) {
+    carrito[index].cantidad += delta;
+    if (carrito[index].cantidad <= 0) carrito.splice(index, 1);
+    guardarCarrito(); renderCarrito();
+}
+
+function eliminarDelCarrito(index) {
+    carrito.splice(index, 1);
+    guardarCarrito(); renderCarrito();
+}
+
+function actualizarTotales() {
+const subtotalSinIVA = carrito.reduce((acc, it) => acc + it.precioSinIVA * it.cantidad, 0);
+const iva = subtotalSinIVA * IVA;
+const totalSinEnvio = subtotalSinIVA + iva;
+const total = Math.max(totalSinEnvio + envio - descuento, 0);
+
+$("#subtotal").textContent = `Subtotal: $${money(subtotalSinIVA)}`;
+$("#iva").textContent = `IVA (21%): $${money(iva)}`;
+$("#envio").textContent = `Envío: $${money(envio)}`;
+$("#descuento").textContent = `Descuento: $${money(descuento)}`;
+$("#total").textContent = `Total: $${money(total)}`;
+}
+
+function actualizarContador(){ $("#contadorCarrito").textContent = carrito.reduce((a,i)=>a+i.cantidad,0); }
+function parpadeoContador(){
+    const c = $("#contadorCarrito");
+    c.classList.add("parpadeo");
+    setTimeout(()=>c.classList.remove("parpadeo"), 800);
+}
+
+function guardarCarrito(){ localStorage.setItem("carrito", JSON.stringify(carrito)); }
+
+$("#vaciarCarrito").addEventListener("click", async () => {
+const ok = await Swal.fire({ title:"Vaciar carrito", text:"¿Seguro que querés vaciarlo?", icon:"warning", showCancelButton:true, confirmButtonText:"Sí, vaciar" });
+if (ok.isConfirmed){
+    carrito = []; guardarCarrito(); renderCarrito(); toast("Carrito vaciado","#ff5252");
+    }
+});
+
+
+$("#aplicarDescuento").addEventListener("click", () => {
+const input = $("#codigoDescuento").value.trim().toLowerCase();
+const subtotalSinIVA = carrito.reduce((acc, it) => acc + it.precioSinIVA * it.cantidad, 0);
+const iva = subtotalSinIVA * IVA;
+const base = subtotalSinIVA + iva + envio;
+
+if (input === CODIGO_DESCUENTO) {
+    descuento = base * 0.10;
+    toast("Descuento aplicado ✓", "#1abc9c");
+} else {
+    descuento = 0;
+    toast("Código inválido", "#ff5252");
+}
+actualizarTotales();
+});
+
+// Envío
+$("#metodoEnvio").addEventListener("change", (e) => {
+    envio = Number(e.target.value) || 0;
+    actualizarTotales();
+});
+
+function precargarFormulario(){
+    $("#nombre").value = "Diego";
+    $("#apellido").value = "Pérez";
+    $("#email").value = "diego@example.com";
+    $("#telefono").value = "1155555555";
+    $("#direccion").value = "Av. Siempre Viva 742";
+    $("#ciudad").value = "CABA";
+    $("#provincia").value = "Buenos Aires";
+    $("#cp").value = "1001";
+}
+precargarFormulario();
+
+$("#formCheckout").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (carrito.length === 0) {
+    toast("Tu carrito está vacío", "#ff5252");
+    return;
+}
+
+    const reqIds = ["nombre","apellido","email","telefono","direccion","ciudad","provincia","cp"];
+    for (const id of reqIds){
+    const el = $("#"+id);
+    if (!el.value.trim()){
+        el.focus();
+        toast("Completá: "+id, "#ff5252");
         return;
     }
-    agregarAlCarrito(p.id, talle);
-    cerrarModal();
-    };
-
-    document.getElementById("modal").style.display = "block";
 }
 
-function cerrarModal() {
-    document.getElementById("modal").style.display = "none";
-}
-document.getElementById("cerrarModal").addEventListener("click", cerrarModal);
+const orderId = "DIEGO-" + Math.floor(Math.random()*1e8).toString(16).toUpperCase();
+await Swal.fire({
+    title: "¡Compra confirmada!",
+    html: `Tu número de orden es <b>${orderId}</b>.<br>Te enviamos el detalle al email.`,
+    icon: "success",
+    confirmButtonText: "Aceptar"
+});
 
-mostrarCatalogo();
-mostrarCarrito();
+    carrito = []; guardarCarrito(); renderCarrito();
+    $("#formCheckout").reset();
+    precargarFormulario();
+    $("#codigoDescuento").value = "";
+    descuento = 0; envio = 0; $("#metodoEnvio").value = "0";
+    actualizarTotales();
+});
+
+
+cargarProductos().then(() => {
+    renderCarrito();
+});
